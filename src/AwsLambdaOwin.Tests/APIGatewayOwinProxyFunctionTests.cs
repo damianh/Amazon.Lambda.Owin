@@ -51,7 +51,7 @@ namespace AwsLambdaOwin
 
             response.StatusCode.ShouldBe(202);
 
-            AssetLastRequest();
+            AssertLastRequest();
         }
 
         [Fact]
@@ -162,7 +162,7 @@ namespace AwsLambdaOwin
 
             response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
 
-            AssetLastRequest();
+            AssertLastRequest();
         }
 
         [Fact]
@@ -187,7 +187,7 @@ namespace AwsLambdaOwin
             response.Content.Headers.ContentType.MediaType.ShouldBe("image/jpeg");
         }
 
-        private void AssetLastRequest()
+        private void AssertLastRequest()
         {
             _sut.LastRequest.Request.Host.Value.ShouldBe("example.com");
             _sut.LastRequest.Request.Path.Value.ShouldBe("/path");

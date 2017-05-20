@@ -189,6 +189,7 @@ namespace AwsLambdaOwin
 
         private void AssertLastRequest()
         {
+            _sut.LastRequest.Request.Method.ShouldBe("GET");
             _sut.LastRequest.Request.Host.Value.ShouldBe("example.com");
             _sut.LastRequest.Request.Path.Value.ShouldBe("/path");
             _sut.LastRequest.Request.Accept.ShouldBe("application/json");

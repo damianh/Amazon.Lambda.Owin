@@ -161,6 +161,7 @@
 
         private void MarshalRequest(OwinContext owinContext, APIGatewayProxyRequest proxyRequest)
         {
+            owinContext.Request.Method = proxyRequest.HttpMethod;
             owinContext.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes(proxyRequest.Body ?? string.Empty));
             if (proxyRequest.Headers != null)
             {

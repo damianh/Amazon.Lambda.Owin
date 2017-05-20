@@ -1,4 +1,4 @@
-#tool "nuget:?package=xunit.runner.console&version=2.1.0"
+#tool "nuget:?package=xunit.runner.console&version=2.3.0-beta1-build3642"
 #addin "Cake.FileHelpers"
 
 var target          = Argument("target", "Default");
@@ -45,7 +45,7 @@ Task("RunTests")
     .IsDependentOn("Build")
     .Does(() =>
 {
-        var dll = "./src/AwsLambdaOwin.Tests/bin/" + configuration + "/AwsLambdaOwin.Tests.dll";
+        var dll = "./src/AwsLambdaOwin.Tests/bin/" + configuration + "/netcoreapp1.0/AwsLambdaOwin.Tests.dll";
         var settings =  new XUnitSettings 
         { 
             ToolPath = "./tools/xunit.runner.console/tools/xunit.console.exe"

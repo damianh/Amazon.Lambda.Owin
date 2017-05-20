@@ -1,4 +1,3 @@
-#tool "nuget:?package=xunit.runner.console&version=2.3.0-beta1-build36420"
 #addin "Cake.FileHelpers"
 
 var target          = Argument("target", "Default");

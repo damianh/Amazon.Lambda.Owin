@@ -1,4 +1,4 @@
-#tool "nuget:?package=xunit.runner.console&version=2.3.0-beta1-build3642"
+#tool "nuget:?package=xunit.runner.console&version=2.3.0-beta1-build36420"
 #addin "Cake.FileHelpers"
 
 var target          = Argument("target", "Default");
@@ -23,7 +23,6 @@ Task("RestorePackages")
     .IsDependentOn("Clean")
     .Does(() =>
 {
-    NuGetRestore(solution);
     DotNetCoreRestore(solution);
 });
 
@@ -45,12 +44,13 @@ Task("RunTests")
     .IsDependentOn("Build")
     .Does(() =>
 {
-        var dll = "./src/AwsLambdaOwin.Tests/bin/" + configuration + "/netcoreapp1.0/AwsLambdaOwin.Tests.dll";
-        var settings =  new XUnitSettings 
-        { 
-            ToolPath = "./tools/xunit.runner.console/tools/xunit.console.exe"
-        };
-        XUnit(dll, settings);
+    var settings = new DotNetCoreTestSettings
+    {
+        Configuration = "Release",
+        WorkingDirectory = "./src/AwsLambdaOwin.Tests"
+    };
+
+    DotNetCoreTest("AwsLambdaOwin.Tests.csproj", settings);
 });
 
 Task("Pack")

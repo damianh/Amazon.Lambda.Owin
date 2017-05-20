@@ -152,7 +152,7 @@ namespace AwsLambdaOwin
             };
             var client = new HttpClient(handler)
             {
-                BaseAddress = new Uri("https://example.com")
+                BaseAddress = new Uri("http://example.com")
             };
             client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
             client.DefaultRequestHeaders.AcceptEncoding.ParseAdd("gzip");
@@ -189,6 +189,7 @@ namespace AwsLambdaOwin
 
         private void AssertLastRequest()
         {
+            _sut.LastRequest.Request.Scheme.ShouldBe("http");
             _sut.LastRequest.Request.Method.ShouldBe("GET");
             _sut.LastRequest.Request.Host.Value.ShouldBe("example.com");
             _sut.LastRequest.Request.Path.Value.ShouldBe("/path");

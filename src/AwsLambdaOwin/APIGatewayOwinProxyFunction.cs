@@ -159,8 +159,17 @@
             _responseContentEncodingForContentType[contentType] = encoding;
         }
 
-        private void MarshalRequest(OwinContext owinContext, APIGatewayProxyRequest proxyRequest)
+
+        /// <summary>
+        ///     Populates the OwinContext with values from the proxy request.
+        /// </summary>
+        /// <param name="owinContext"></param>
+        /// <param name="proxyRequest"></param>
+        protected virtual void MarshalRequest(OwinContext owinContext, APIGatewayProxyRequest proxyRequest)
         {
+            // The scheme is not available on the proxy request. If needed, it should be transported over custom header
+            // and this MarshalRequest overridden.
+            owinContext.Request.Scheme = "http"; 
             owinContext.Request.Method = proxyRequest.HttpMethod;
             owinContext.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes(proxyRequest.Body ?? string.Empty));
             if (proxyRequest.Headers != null)

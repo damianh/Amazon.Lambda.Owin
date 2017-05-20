@@ -196,7 +196,6 @@
                 }
                 owinContext.Request.QueryString = new QueryString(sb.ToString());
             }
-
             owinContext.Response.Body = new MemoryStream();
         }
 
@@ -207,7 +206,7 @@
         /// <param name="owinResponse"></param>
         /// <param name="statusCodeIfNotSet"></param>
         /// <returns><see cref="APIGatewayProxyResponseWithBase64Flag"/></returns>
-        protected APIGatewayProxyResponseWithBase64Flag MarshalResponse(IOwinResponse owinResponse, int statusCodeIfNotSet = 200)
+        protected virtual APIGatewayProxyResponseWithBase64Flag MarshalResponse(IOwinResponse owinResponse, int statusCodeIfNotSet = 200)
         {
             var response = new APIGatewayProxyResponseWithBase64Flag
             {
@@ -236,9 +235,15 @@
             if (owinResponse.Body != null)
             {
                 var rcEncoding = DefaultResponseContentEncoding;
-                if (contentType != null && _responseContentEncodingForContentType.ContainsKey(contentType))
+              
+
+                if (contentType != null)
                 {
-                    rcEncoding = _responseContentEncodingForContentType[contentType];
+                    var contentTypeWithoutCharset = contentType.Split(';')[0]; // ignore the charset portion, if supplied
+                    if (_responseContentEncodingForContentType.ContainsKey(contentTypeWithoutCharset))
+                    {
+                        rcEncoding = _responseContentEncodingForContentType[contentTypeWithoutCharset];
+                    }
                 }
 
                 if (rcEncoding == ResponseContentEncoding.Base64)

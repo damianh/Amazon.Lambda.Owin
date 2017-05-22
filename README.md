@@ -54,6 +54,26 @@ Once the function is deployed configure API Gateway with a HTTP Proxy to call
 the Lambda Function. Refer to the API Gateway [developer guide][2] for more
 information.
 
+## Getting the API Gateway Request message
+
+If the OWIN function is hosted in lambda, you can get the original API Gateway
+Request message from the enviroment:
+
+```csharp
+protected override Func<IDictionary<string, object>, Task> Init()
+{
+    return async env =>
+    {
+        if (IsAPIGatewayProxyRequest(env))
+        {
+            var apiGatewayProxyRequest = GetAPIGatewayProxyRequest(env);
+            ...
+        }
+        ...
+    };
+}
+```
+
 ## Supporting Binary Response Content
 
 The interface between the API Gateway and Lambda provides for and assumes

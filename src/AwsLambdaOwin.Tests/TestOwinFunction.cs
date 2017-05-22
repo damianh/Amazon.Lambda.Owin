@@ -59,7 +59,7 @@ namespace AwsLambdaOwin
                 if (IsAPIGatewayProxyRequest(env))
                 {
                     var apiGatewayProxyRequest = GetAPIGatewayProxyRequest(env);
-                    await context.Response.WriteAsync(apiGatewayProxyRequest.RequestContext?.RequestId);
+                    await context.Response.WriteAsync(apiGatewayProxyRequest.RequestContext.RequestId);
                 }
                 else
                 {

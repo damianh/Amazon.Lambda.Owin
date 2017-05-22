@@ -45,6 +45,10 @@ namespace AwsLambdaOwin
                 {
                     { "a" , "1" },
                     { "b" , "2" }
+                },
+                RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
+                {
+                    RequestId = "foo"
                 }
             };
             var response = await _sut.FunctionHandler(request, context);

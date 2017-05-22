@@ -53,11 +53,18 @@ namespace AwsLambdaOwin
 
                     return;
                 }
-
                 context.Response.StatusCode = 202;
                 context.Response.ReasonPhrase = "OK";
                 context.Response.ContentType = "text/plain";
-                await context.Response.WriteAsync("Hello");
+                if (IsAPIGatewayProxyRequest(env))
+                {
+                    var apiGatewayProxyRequest = GetAPIGatewayProxyRequest(env);
+                    await context.Response.WriteAsync(apiGatewayProxyRequest.RequestContext?.RequestId);
+                }
+                else
+                {
+                    await context.Response.WriteAsync("Inside Lambda");
+                }
                 LastRequest = context;
             };
         }

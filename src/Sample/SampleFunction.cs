@@ -22,8 +22,12 @@
                     context.Response.Body = stream;
                     return;
                 }
+
                 context.Response.Headers.Append("Content-Type", "text/plain");
-                await context.Response.WriteAsync("text");
+
+                var proxyRequest = GetAPIGatewayProxyRequest(env);
+
+                await context.Response.WriteAsync(proxyRequest.RequestContext.RequestId);
             };
         }
     }

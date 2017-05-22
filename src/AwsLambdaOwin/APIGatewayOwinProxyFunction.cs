@@ -169,6 +169,7 @@
         {
             // The scheme is not available on the proxy request. If needed, it should be transported over custom header
             // and this MarshalRequest overridden.
+            owinContext.Set(APIGatewayProxyRequestKey, proxyRequest);
             owinContext.Request.Scheme = "http"; 
             owinContext.Request.Method = proxyRequest.HttpMethod;
             owinContext.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes(proxyRequest.Body ?? string.Empty));
@@ -288,6 +289,22 @@
             }
 
             return response;
+        }
+
+        public const string APIGatewayProxyRequestKey = "AwsLambdaOwin.APIGatewayProxyRequest";
+
+        protected APIGatewayProxyRequest GetAPIGatewayProxyRequest(IDictionary<string, object> environment)
+        {
+            if (environment.ContainsKey(APIGatewayProxyRequestKey))
+            {
+                return (APIGatewayProxyRequest)environment[APIGatewayProxyRequestKey];
+            }
+            return null;
+        }
+
+        protected bool IsAPIGatewayProxyRequest(IDictionary<string, object> environment)
+        {
+            return environment.ContainsKey(APIGatewayProxyRequestKey);
         }
     }
 }

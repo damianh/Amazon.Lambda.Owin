@@ -10,7 +10,7 @@ namespace Amazon.Lambda.TestUtilities
 
     public static class ApiGatewayOwinProxyFunctionExtensions
     {
-        public static async Task<APIGatewayProxyResponseWithBase64Flag> FunctionHandler(
+        public static async Task<APIGatewayProxyResponse> FunctionHandler(
             this APIGatewayOwinProxyFunction function,
             APIGatewayProxyRequest request,
             ILambdaContext lambdaContext)
@@ -23,7 +23,7 @@ namespace Amazon.Lambda.TestUtilities
 
             var responseStream = await function.FunctionHandler(requestStream, lambdaContext);
 
-            var response = serializer.Deserialize<APIGatewayProxyResponseWithBase64Flag>(responseStream);
+            var response = serializer.Deserialize<APIGatewayProxyResponse>(responseStream);
             return response;
         }
     }

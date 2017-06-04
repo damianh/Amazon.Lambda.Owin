@@ -97,7 +97,7 @@
             var owinContext = new OwinContext();
             MarshalRequest(owinContext, proxyRequest);
 
-            APIGatewayProxyResponseWithBase64Flag response;
+            APIGatewayProxyResponse response;
             try
             {
                 await AppFunc(owinContext.Environment);
@@ -207,9 +207,9 @@
         /// <param name="owinResponse"></param>
         /// <param name="statusCodeIfNotSet"></param>
         /// <returns><see cref="APIGatewayProxyResponseWithBase64Flag"/></returns>
-        protected virtual APIGatewayProxyResponseWithBase64Flag MarshalResponse(IOwinResponse owinResponse, int statusCodeIfNotSet = 200)
+        protected virtual APIGatewayProxyResponse MarshalResponse(IOwinResponse owinResponse, int statusCodeIfNotSet = 200)
         {
-            var response = new APIGatewayProxyResponseWithBase64Flag
+            var response = new APIGatewayProxyResponse
             {
                 StatusCode = owinResponse.StatusCode != 0 ? owinResponse.StatusCode : statusCodeIfNotSet
             };

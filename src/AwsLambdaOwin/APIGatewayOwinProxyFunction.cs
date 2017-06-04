@@ -9,7 +9,7 @@
     using Amazon.Lambda.APIGatewayEvents;
     using Amazon.Lambda.Core;
     using Amazon.Lambda.Serialization.Json;
-    using AwsLambdaOwin.Imports.Microsoft.IO.RecyclableMemoryStream;
+    using Microsoft.IO;
     using Microsoft.Owin;
     using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;
 

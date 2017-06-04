@@ -114,7 +114,7 @@
                 throw;
             }
 
-            var responseStream = new MemoryStream();
+            var responseStream = _memoryStreamManager.GetStream();
             _serializer.Serialize(response, responseStream);
             responseStream.Position = 0;
 

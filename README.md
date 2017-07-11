@@ -57,6 +57,7 @@ return async env =>
     var ctx = new LambdaOwinContext(env);
     var proxyRequest = ctx.ProxyRequest;
     var lambdaConext = ctx.LambdaConext;
+    ...
 };
 ```
 

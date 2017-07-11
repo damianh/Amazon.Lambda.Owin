@@ -13,7 +13,7 @@
         {
             return async env =>
             {
-                var context = new OwinContext(env);
+                var context = new LambdaOwinContext(env);
                 if (context.Request.Path.StartsWithSegments(PathString.FromUriComponent("/img")))
                 {
                     var stream = typeof(SampleFunction).GetTypeInfo().Assembly.GetManifestResourceStream("Sample.doge.jpg");
@@ -25,7 +25,7 @@
 
                 context.Response.Headers.Append("Content-Type", "text/plain");
 
-                var proxyRequest = GetAPIGatewayProxyRequest(env);
+                var proxyRequest = context.ProxyRequest;
 
                 await context.Response.WriteAsync(proxyRequest.RequestContext.RequestId);
             };

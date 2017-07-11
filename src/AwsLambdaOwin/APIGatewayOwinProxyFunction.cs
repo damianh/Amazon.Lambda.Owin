@@ -15,6 +15,9 @@
 
     public abstract class APIGatewayOwinProxyFunction
     {
+        public const string LambdaContextKey = "AwsLambdaOwin.LambdaContext";
+        public const string APIGatewayProxyRequestKey = "AwsLambdaOwin.APIGatewayProxyRequest";
+
         // Defines a mapping from registered content types to the response encoding format
         // which dictates what transformations should be applied before returning response content
         private readonly Dictionary<string, ResponseContentEncoding> _responseContentEncodingForContentType 
@@ -95,6 +98,9 @@
             lambdaContext.Logger.LogLine($"Incoming {proxyRequest.HttpMethod} requests to {proxyRequest.Path}");
 
             var owinContext = new OwinContext();
+            owinContext.Environment[LambdaContextKey] = lambdaContext;
+            owinContext.Environment[APIGatewayProxyRequestKey] = proxyRequest;
+            owinContext.Environment["owin.RequestId"] = proxyRequest.RequestContext.RequestId;
             MarshalRequest(owinContext, proxyRequest);
 
             APIGatewayProxyResponse response;
@@ -159,7 +165,6 @@
             _responseContentEncodingForContentType[contentType] = encoding;
         }
 
-
         /// <summary>
         ///     Populates the OwinContext with values from the proxy request.
         /// </summary>
@@ -170,9 +175,9 @@
             // The scheme is not available on the proxy request. If needed, it should be transported over custom header
             // and this MarshalRequest overridden.
             owinContext.Set(APIGatewayProxyRequestKey, proxyRequest);
-            owinContext.Request.Scheme = "http"; 
+            owinContext.Request.Scheme = "http";
             owinContext.Request.Method = proxyRequest.HttpMethod;
-            owinContext.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes(proxyRequest.Body ?? string.Empty));
+            owinContext.Request.Body = _memoryStreamManager.GetStream(proxyRequest.Body);
             if (proxyRequest.Headers != null)
             {
                 foreach (var header in proxyRequest.Headers)
@@ -197,7 +202,7 @@
                 }
                 owinContext.Request.QueryString = new QueryString(sb.ToString());
             }
-            owinContext.Response.Body = new MemoryStream();
+            owinContext.Response.Body = _memoryStreamManager.GetStream();
         }
 
         /// <summary>
@@ -206,7 +211,6 @@
         /// </summary>
         /// <param name="owinResponse"></param>
         /// <param name="statusCodeIfNotSet"></param>
-        /// <returns><see cref="APIGatewayProxyResponseWithBase64Flag"/></returns>
         protected virtual APIGatewayProxyResponse MarshalResponse(IOwinResponse owinResponse, int statusCodeIfNotSet = 200)
         {
             var response = new APIGatewayProxyResponse
@@ -289,22 +293,6 @@
             }
 
             return response;
-        }
-
-        public const string APIGatewayProxyRequestKey = "AwsLambdaOwin.APIGatewayProxyRequest";
-
-        protected APIGatewayProxyRequest GetAPIGatewayProxyRequest(IDictionary<string, object> environment)
-        {
-            if (environment.ContainsKey(APIGatewayProxyRequestKey))
-            {
-                return (APIGatewayProxyRequest)environment[APIGatewayProxyRequestKey];
-            }
-            return null;
-        }
-
-        protected bool IsAPIGatewayProxyRequest(IDictionary<string, object> environment)
-        {
-            return environment.ContainsKey(APIGatewayProxyRequestKey);
         }
     }
 }

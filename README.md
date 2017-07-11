@@ -22,7 +22,7 @@ In your OWIN application / library, add a class that extends
 `APIGatewayOwinProxyFunction` and implement the Init method.
 
 Here is an example implementation that uses [KatanaNetStandard](1) for the
-`OwinContext` type
+`OwinContext` type.
 
 ```csharp
 namespace TestOwinApp
@@ -45,6 +45,19 @@ namespace TestOwinApp
         }
     }
 }
+```
+
+There is also an `LambdaOwinContext` which is an extension of `OwinContext`
+that give access to `APIGatewayProxyRequest` and `ILambdaContext`. This will
+allow you to further adapt the owin enviroment to your needs.
+
+```csharp
+return async env =>
+{
+    var ctx = new LambdaOwinContext(env);
+    var proxyRequest = ctx.ProxyRequest;
+    var lambdaConext = ctx.LambdaConext;
+};
 ```
 
 The function handler for the Lambda function will be

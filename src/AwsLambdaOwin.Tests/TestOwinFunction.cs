@@ -22,7 +22,7 @@ namespace AwsLambdaOwin
         {
             return async env =>
             {
-                var context = new OwinContext(env);
+                var context = new LambdaOwinContext(env);
 
                 if(context.Request.Path.StartsWithSegments(PathString.FromUriComponent("/img")))
                 {
@@ -56,10 +56,9 @@ namespace AwsLambdaOwin
                 context.Response.StatusCode = 202;
                 context.Response.ReasonPhrase = "OK";
                 context.Response.ContentType = "text/plain";
-                if (IsAPIGatewayProxyRequest(env))
+                if (context.ProxyRequest != null)
                 {
-                    var apiGatewayProxyRequest = GetAPIGatewayProxyRequest(env);
-                    await context.Response.WriteAsync(apiGatewayProxyRequest.RequestContext.RequestId);
+                    await context.Response.WriteAsync(context.ProxyRequest.RequestContext.RequestId);
                 }
                 else
                 {

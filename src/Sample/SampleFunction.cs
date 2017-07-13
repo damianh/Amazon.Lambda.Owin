@@ -9,14 +9,15 @@
 
     public class SampleFunction : APIGatewayOwinProxyFunction
     {
-        protected override Func<IDictionary<string, object>, Task> Init()
+        public SampleFunction()
         {
-            return async env =>
+            AppFunc = async env =>
             {
                 var context = new LambdaOwinContext(env);
                 if (context.Request.Path.StartsWithSegments(PathString.FromUriComponent("/img")))
                 {
-                    var stream = typeof(SampleFunction).GetTypeInfo().Assembly.GetManifestResourceStream("Sample.doge.jpg");
+                    var stream = typeof(SampleFunction).GetTypeInfo().Assembly
+                        .GetManifestResourceStream("Sample.doge.jpg");
                     context.Response.ContentType = "image/jpeg";
                     context.Response.ContentLength = stream.Length;
                     context.Response.Body = stream;
@@ -30,5 +31,7 @@
                 await context.Response.WriteAsync(proxyRequest.RequestContext.RequestId);
             };
         }
+        
+        public override Func<IDictionary<string, object>, Task> AppFunc { get; }
     }
 }

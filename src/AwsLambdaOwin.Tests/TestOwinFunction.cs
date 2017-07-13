@@ -1,12 +1,13 @@
+using Task = System.Threading.Tasks.Task;
+
 namespace AwsLambdaOwin
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Reflection;
     using System.Text;
-    using System.Threading.Tasks;
     using Microsoft.Owin;
+    using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, Task>;
 
     public class TestOwinFunction : APIGatewayOwinProxyFunction
     {
@@ -16,17 +17,15 @@ namespace AwsLambdaOwin
         {
             EnableRequestLogging = GetEnvironmentVariableBool("EnableRequestLogging");
             EnableResponseLogging = GetEnvironmentVariableBool("EnableResponseLogging");
-        }
 
-        protected override Func<IDictionary<string, object>, Task> Init()
-        {
-            return async env =>
+            AppFunc = async env =>
             {
                 var context = new LambdaOwinContext(env);
 
-                if(context.Request.Path.StartsWithSegments(PathString.FromUriComponent("/img")))
+                if (context.Request.Path.StartsWithSegments(PathString.FromUriComponent("/img")))
                 {
-                    var stream = typeof(TestOwinFunction).GetTypeInfo().Assembly.GetManifestResourceStream("AwsLambdaOwin.doge.jpg");
+                    var stream = typeof(TestOwinFunction).GetTypeInfo().Assembly
+                        .GetManifestResourceStream("AwsLambdaOwin.doge.jpg");
                     var memoryStream = new MemoryStream();
                     stream.CopyTo(memoryStream);
                     context.Response.ContentType = "image/jpeg";
@@ -37,7 +36,8 @@ namespace AwsLambdaOwin
 
                 if (context.Request.Path.StartsWithSegments(PathString.FromUriComponent("/img_nomemorystream")))
                 {
-                    var stream = typeof(TestOwinFunction).GetTypeInfo().Assembly.GetManifestResourceStream("AwsLambdaOwin.doge.jpg");
+                    var stream = typeof(TestOwinFunction).GetTypeInfo().Assembly
+                        .GetManifestResourceStream("AwsLambdaOwin.doge.jpg");
                     context.Response.ContentType = "image/jpeg";
                     context.Response.ContentLength = stream.Length;
                     context.Response.Body = stream;
@@ -67,6 +67,8 @@ namespace AwsLambdaOwin
                 LastRequest = context;
             };
         }
+
+        public override AppFunc AppFunc { get; }
 
         private static bool GetEnvironmentVariableBool(string name)
         {

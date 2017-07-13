@@ -35,14 +35,16 @@ namespace TestOwinApp
 
     public class LambdaFunction : APIGatewayOwinProxyFunction
     {
-        protected override Func<IDictionary<string, object>, Task> Init()
+        public LambdaFunction()
         {
-            return async env =>
+            AppFunc = async env =>
             {
                 var ctx = new OwinContext(env);
                 await ctx.Response.WriteAsync("Hello OWIN on Lambda");
-            };
+            }; 
         }
+
+        public override Func<IDictionary<string, object>, Task> AppFunc { get; }
     }
 }
 ```

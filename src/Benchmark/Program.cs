@@ -40,14 +40,16 @@
 
     public class TestFunction : APIGatewayOwinProxyFunction
     {
-        protected override Func<IDictionary<string, object>, Task> Init()
+        public TestFunction()
         {
-            return async env =>
+            AppFunc = async env =>
             {
                 var context = new OwinContext(env);
                 await context.Response.WriteAsync(new string('a', 100000));
             };
         }
+        
+        public override Func<IDictionary<string, object>, Task> AppFunc { get; }
 
         public void MarshalResponse(IOwinResponse owinResponse)
         {

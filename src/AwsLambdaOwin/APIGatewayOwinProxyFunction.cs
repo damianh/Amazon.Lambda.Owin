@@ -69,14 +69,7 @@
         /// </summary>
         public ResponseContentEncoding DefaultResponseContentEncoding { get; set; } = ResponseContentEncoding.Base64;
 
-        public AppFunc AppFunc { get; }
-
-        protected APIGatewayOwinProxyFunction()
-        {
-            AppFunc = Init();
-        }
-
-        protected abstract AppFunc Init();
+        public abstract AppFunc AppFunc { get; }
 
         /// <summary>
         ///     The Lambda function handler that will be invoked vis APIGW.

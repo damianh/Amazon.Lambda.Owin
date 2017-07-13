@@ -6,9 +6,11 @@ namespace AwsLambdaOwin
 
     public class ThrowsOwinFunction : APIGatewayOwinProxyFunction
     {
-        protected override Func<IDictionary<string, object>, Task> Init()
+        public ThrowsOwinFunction()
         {
-            return env => throw new Exception("boom");
+            AppFunc = async env => throw new Exception("boom");
         }
+        
+        public override Func<IDictionary<string, object>, Task> AppFunc { get; }
     }
 }

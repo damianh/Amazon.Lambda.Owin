@@ -182,6 +182,28 @@ namespace AwsLambdaOwin
         }
 
         [Fact]
+        public async Task TextPostHttpClientTest()
+        {
+            var handler = new OwinHttpMessageHandler(_sut.AppFunc)
+            {
+                UseCookies = true
+            };
+            var client = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("http://example.com")
+            };
+            client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+
+            var response = await client.PostAsync("/text_post", new StringContent("test"));
+
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+            var body = await response.Content.ReadAsStringAsync();
+            
+            Assert.Equal("test", body);
+        }
+
+        [Fact]
         public async Task ImageHttpClientTest()
         {
             var handler = new OwinHttpMessageHandler(_sut.AppFunc)

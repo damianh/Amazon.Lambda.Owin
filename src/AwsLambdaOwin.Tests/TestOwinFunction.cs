@@ -53,6 +53,14 @@ namespace AwsLambdaOwin
 
                     return;
                 }
+                if (context.Request.Path.StartsWithSegments(PathString.FromUriComponent("/text_post")))
+                {
+                    var input = await new StreamReader(context.Request.Body).ReadToEndAsync();
+                    
+                    context.Response.ContentType = "text/plain";
+                    await context.Response.WriteAsync(input, context.Request.CallCancelled);
+                    return;
+                }
                 context.Response.StatusCode = 202;
                 context.Response.ReasonPhrase = "OK";
                 context.Response.ContentType = "text/plain";

@@ -91,8 +91,6 @@ namespace AwsLambdaOwin
             response.StatusCode.ShouldBe(200);
 
             response.Body.ShouldBe("Hi");
-
-            AssertLastRequest();
         }
 
         [Fact]

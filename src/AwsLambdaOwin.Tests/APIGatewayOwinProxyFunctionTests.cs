@@ -59,6 +59,41 @@ namespace AwsLambdaOwin
         }
 
         [Fact]
+        public async Task TextPostProxyRequestTest()
+        {
+            var context = new TestLambdaContext
+            {
+                FunctionName = "Owin"
+            };
+            var request = new APIGatewayProxyRequest
+            {
+                HttpMethod = "POST",
+                Body = "Hi",
+                Headers = new Dictionary<string, string>
+                {
+                    { "Accept", "application/json" },
+                    { "Accept-Encoding", "gzip,deflate" },
+                    { "Host", "example.com" }
+                },
+                Path = "/text_post",
+                QueryStringParameters = new Dictionary<string, string>
+                {
+                    { "a" , "1" },
+                    { "b" , "2" }
+                },
+                RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
+                {
+                    RequestId = "foo"
+                }
+            };
+            var response = await _sut.FunctionHandler(request, context);
+
+            response.StatusCode.ShouldBe(200);
+
+            response.Body.ShouldBe("Hi");
+        }
+
+        [Fact]
         public async Task ImageProxyRequestTest()
         {
             var context = new TestLambdaContext
@@ -177,8 +212,28 @@ namespace AwsLambdaOwin
             var response = await client.GetAsync("/path?a=1&b=2");
 
             response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+        }
 
-            AssertLastRequest();
+        [Fact]
+        public async Task TextPostHttpClientTest()
+        {
+            var handler = new OwinHttpMessageHandler(_sut.AppFunc)
+            {
+                UseCookies = true
+            };
+            var client = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("http://example.com")
+            };
+            client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+
+            var response = await client.PostAsync("/text_post", new StringContent("test"));
+
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+            var body = await response.Content.ReadAsStringAsync();
+            
+            Assert.Equal("test", body);
         }
 
         [Fact]

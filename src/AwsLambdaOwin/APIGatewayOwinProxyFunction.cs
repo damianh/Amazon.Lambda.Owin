@@ -163,7 +163,7 @@
         /// </summary>
         /// <param name="owinContext"></param>
         /// <param name="proxyRequest"></param>
-        protected virtual void MarshalRequest(OwinContext owinContext, APIGatewayProxyRequest proxyRequest)
+        protected virtual async Task MarshalRequest(OwinContext owinContext, APIGatewayProxyRequest proxyRequest)
         {
             // The scheme is not available on the proxy request. If needed, it should be transported over custom header
             // and this MarshalRequest overridden.
@@ -171,6 +171,12 @@
             owinContext.Request.Scheme = "http";
             owinContext.Request.Method = proxyRequest.HttpMethod;
             owinContext.Request.Body = _memoryStreamManager.GetStream(proxyRequest.Body);
+            var writer = new StreamWriter(owinContext.Request.Body)
+            {
+                AutoFlush = true
+            };
+            await writer.WriteAsync(proxyRequest.Body);
+            owinContext.Request.Body.Position = 0;
             if (proxyRequest.Headers != null)
             {
                 foreach (var header in proxyRequest.Headers)

@@ -59,6 +59,43 @@ namespace AwsLambdaOwin
         }
 
         [Fact]
+        public async Task TextPostProxyRequestTest()
+        {
+            var context = new TestLambdaContext
+            {
+                FunctionName = "Owin"
+            };
+            var request = new APIGatewayProxyRequest
+            {
+                HttpMethod = "POST",
+                Body = "Hi",
+                Headers = new Dictionary<string, string>
+                {
+                    { "Accept", "application/json" },
+                    { "Accept-Encoding", "gzip,deflate" },
+                    { "Host", "example.com" }
+                },
+                Path = "/text_post",
+                QueryStringParameters = new Dictionary<string, string>
+                {
+                    { "a" , "1" },
+                    { "b" , "2" }
+                },
+                RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
+                {
+                    RequestId = "foo"
+                }
+            };
+            var response = await _sut.FunctionHandler(request, context);
+
+            response.StatusCode.ShouldBe(200);
+
+            response.Body.ShouldBe("Hi");
+
+            AssertLastRequest();
+        }
+
+        [Fact]
         public async Task ImageProxyRequestTest()
         {
             var context = new TestLambdaContext
@@ -177,8 +214,6 @@ namespace AwsLambdaOwin
             var response = await client.GetAsync("/path?a=1&b=2");
 
             response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
-
-            AssertLastRequest();
         }
 
         [Fact]

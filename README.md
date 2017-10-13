@@ -1,7 +1,6 @@
 # AwsLambdaOwin
 
 [![NuGet](https://img.shields.io/nuget/v/AwsLambdaOwin.svg)](https://www.nuget.org/packages/AwsLambdaOwin/)
-[![AppVeyor](https://img.shields.io/appveyor/ci/damianh/awslambdaowin.svg)](https://ci.appveyor.com/project/damianh/awslambdaowin)
 
 This package makes it easy to run OWIN applications as a Lambda function with
 API Gateway. This allows .NET core developers to create "serverless" applications

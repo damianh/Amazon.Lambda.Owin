@@ -1,5 +1,3 @@
-#addin "Cake.FileHelpers"
-
 var target          = Argument("target", "Default");
 var configuration   = Argument("configuration", "Release");
 var artifactsDir    = Directory("./artifacts");
@@ -7,7 +5,7 @@ var solution        = "./src/AwsLambdaOwin.sln";
 var buildNumber     = string.IsNullOrWhiteSpace(EnvironmentVariable("APPVEYOR_BUILD_NUMBER")) 
                         ? "0" 
                         : EnvironmentVariable("APPVEYOR_BUILD_NUMBER");
-var version         = FileReadText("version.txt");
+var version         = System.IO.File.ReadAllText("version.txt");
 var commitSha       = string.IsNullOrWhiteSpace(EnvironmentVariable("APPVEYOR_REPO_COMMIT"))
                         ? ""
                         : EnvironmentVariable("APPVEYOR_REPO_COMMIT");
